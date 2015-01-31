@@ -165,10 +165,6 @@ for i=1:nn
     end
     temp1old=temp1;
 end
-% tempMatrix=output.Data;
-% tempMatrix=tempMatrix(~isnan(tempMatrix));
-% tempMatrix=reshape(tempMatrix,[numel(tempMatrix)/2,2]);
-% output.Data=tempMatrix;
 
 end
 

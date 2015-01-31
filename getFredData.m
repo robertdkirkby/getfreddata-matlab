@@ -2,7 +2,12 @@ function [output] = getFredData(series_id, observation_start, observation_end, u
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Connects to FRED database and retrieves the data series identified by series_id. 
-% 
+%
+% Examples based on getting M1 money (FRED: M1SL): 
+%       M1 = getFredData(‘M1SL’, ‘1960-01-01′, ‘2000-12-31′);
+%       M1 = getFredData(‘M1SL’, ‘1960-01-01′, ‘2000-12-31′,’pca’,’q’);
+% More at: robertdkirkby.com/academic/matlab-tips/
+%
 % All dates should be formatted as YYYY-MM-DD
 %
 % observation_start: Observations start (as soon as possible) from this date
@@ -34,10 +39,10 @@ function [output] = getFredData(series_id, observation_start, observation_end, u
 %   'SeasonalAdjustment'
 %   'Frequency'
 %   'Units'
-%   'DateRange'         %' 1947-01-01 to 2014-04-01'
+%   'DateRange'
 %   'LastUpdated'
-%   'Notes'             %[1x332 char] % Have dropped notes as it caused problems with some variables
-%   'Data'              %[232x2 double]
+%   'Notes'             
+%   'Data'
 %
 %
 % Formats for inputs: http://api.stlouisfed.org/docs/fred/series_observations.html
@@ -57,9 +62,9 @@ function [output] = getFredData(series_id, observation_start, observation_end, u
 %
 % Created based off of getFredData.m by Kim J. Ruhl (http://www.kimjruhl.com/computing/)
 %
-%This product uses the FRED® API but is not endorsed or certified by 
-%the Federal Reserve Bank of St. Louis.  The terms of use can be found at
-%http://api.stlouisfed.org/terms_of_use.html
+% This product uses the FRED® API but is not endorsed or certified by 
+% the Federal Reserve Bank of St. Louis.  The terms of use can be found at
+% http://api.stlouisfed.org/terms_of_use.html
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
 
@@ -117,11 +122,14 @@ output.Frequency=cellstr(char(getValue(info,'frequency')));
 output.Units=cellstr(char(getValue(info,'units')));
 output.DataRange=cellstr([char(getValue(info,'observation_start')),' to ',char(getValue(info,'observation_end'))]);
 output.LastUpdated=cellstr(char(getValue(info,'last_updated')));
-% I got rid of 'Notes' as some variables, eg. 'JTSJOR', do not have notes
-% field and this was causing errors. I couldn't figure out how to catch the
-% error and drop Notes only in this instance, so just got rid of it
-% entirely.
-%output.Notes=cellstr(char(getValue(info,'notes')));
+% Some variables, eg. 'JTSJOR', do not have notes
+% field and this was causing errors. I have dealt with this by creating
+% an empty Notes whenever there are none in FRED.
+try
+    output.Notes=cellstr(char(getValue(info,'notes')));
+catch
+    output.Notes={' '};
+end
 
 % /fred/release
 xDoc1=xmlread(['http://api.stlouisfed.org/fred/series/release?series_id=',series_id,optionstring,'&api_key=',api_key]);

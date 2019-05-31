@@ -2,6 +2,7 @@ getfreddata-matlab
 ==================
 
 Matlab functions for directly importing data from FRED (Federal Reserve Economic Database)
+An explanation of function: http://www.robertdkirkby.com/codes-toolkits/getfreddata/
 
 Matlab has an inbuilt function for this, but this one allows for more control, 
 letting you specify the frequency and 'transformation' (eg. level, log, percentage change on year ago).
